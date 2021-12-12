@@ -1,16 +1,16 @@
 header {
   image = "https://raw.githubusercontent.com/mineiros-io/brand/3bffd30e8bdbbde32c143e2650b2faa55f1df3ea/mineiros-primary-logo.svg"
-  url   = "https://mineiros.io/?ref=terraform-module-template"
+  url   = "https://mineiros.io/?ref=terraform-google-billing-budget"
 
   badge "build" {
-    image = "https://github.com/mineiros-io/terraform-module-template/workflows/Tests/badge.svg"
-    url   = "https://github.com/mineiros-io/terraform-module-template/actions"
+    image = "https://github.com/mineiros-io/terraform-google-billing-budget/workflows/Tests/badge.svg"
+    url   = "https://github.com/mineiros-io/terraform-google-billing-budget/actions"
     text  = "Build Status"
   }
 
   badge "semver" {
-    image = "https://img.shields.io/github/v/tag/mineiros-io/terraform-module-template.svg?label=latest&sort=semver"
-    url   = "https://github.com/mineiros-io/terraform-module-template/releases"
+    image = "https://img.shields.io/github/v/tag/mineiros-io/terraform-google-billing-budget.svg?label=latest&sort=semver"
+    url   = "https://github.com/mineiros-io/terraform-google-billing-budget/releases"
     text  = "GitHub tag (latest SemVer)"
   }
 
@@ -20,23 +20,11 @@ header {
     text  = "Terraform Version"
   }
 
-  badge "tf-aws-provider" {
-    image = "https://img.shields.io/badge/AWS-3-F8991D.svg?logo=terraform"
-    url   = "https://github.com/terraform-providers/terraform-provider-aws/releases"
-    text  = "AWS Provider Version"
-  }
-
-  # badge "tf-gh" {
-  #   image = "https://img.shields.io/badge/GH-4-F8991D.svg?logo=terraform"
-  #   url = "https://github.com/terraform-providers/terraform-provider-github/releases"
-  #   text = "Github Provider Version"
-  # }
-
-  # badge "tf-gcp-provider" {
-  #   image = "https://img.shields.io/badge/google-4-1A73E8.svg?logo=terraform"
-  #   url   = "https://github.com/terraform-providers/terraform-provider-google/releases"
-  #   text  = "Google Provider Version"
-  # }
+   badge "tf-gcp-provider" {
+     image = "https://img.shields.io/badge/google-3-1A73E8.svg?logo=terraform"
+     url   = "https://github.com/terraform-providers/terraform-provider-google/releases"
+     text  = "Google Provider Version"
+   }
 
   badge "slack" {
     image = "https://img.shields.io/badge/slack-@mineiros--community-f32752.svg?logo=slack"
@@ -46,13 +34,18 @@ header {
 }
 
 section {
-  title   = "terraform-module-template"
+  title   = "terraform-google-monitoring-notification-channel"
   toc     = true
   content = <<-END
-    A [Terraform] base module for [Amazon Web Services (AWS)][aws].
+    A [Terraform] module to manage [notification channels](https://cloud.google.com/monitoring/support/notification-options)
+    on [Google Cloud Platform (GCP)](https://cloud.google.com).
+
+    A NotificationChannel is a medium through which an alert is delivered when
+    a policy violation is detected. Examples of channels include email, SMS,
+    and third-party messaging applications.
 
     **_This module supports Terraform version 1
-    and is compatible with the Terraform AWS Provider version 3._**
+    and is compatible with the Terraform Google Cloud Provider version 3._**
 
     This module is part of our Infrastructure as Code (IaC) framework
     that enables our users and customers to easily deploy and manage reusable,
@@ -64,24 +57,31 @@ section {
     content = <<-END
       This module implements the following Terraform resources
 
-      - `google_resource`
-      - `google_something_else`
-
-      and supports additional features of the following modules:
-
-      - [mineiros-io/something/google](https://github.com/mineiros-io/terraform-google-something)
+      - `google_monitoring_notification_channel`
     END
   }
 
   section {
     title   = "Getting Started"
     content = <<-END
-      Most common usage of the module:
+      Create a slack notification channel:
 
       ```hcl
-      module "terraform-module-template" {
-        source = "git@github.com:mineiros-io/terraform-module-template.git?ref=v0.0.1"
-      }
+      module "terraform-google-billing-budget" {
+        source = "git@github.com:mineiros-io/terraform-google-monitoring-notification-channel.git?ref=v0.0.1"
+
+        type        = "slack"
+
+        display_name = "slack-alert"
+        description  = "An example Slack notification channel."
+
+        labels       = {
+          channel_name = "#alerts"
+        }
+
+        sensitive_labels = {
+          auth_token = "XXX"
+        }
       ```
     END
   }
@@ -98,68 +98,103 @@ section {
       section {
         title = "Main Resource Configuration"
 
-        # please add main resource variables here
+        variable "type" {
+          required    = true
+          type        = string
+          description = <<-END
+            The type of the notification channel. Valid values are `email`, `slack`, `sms`, `webhook_basicauth` and `pagerduty`.
+          END
+        }
 
-        # remove examples
+        variable "project" {
+          type        = string
+          description = <<-END
+            The ID of the project in which the resource belongs. If it is not set, the provider project is used.
+          END
+          default = null
+        }
 
-        ### Example of a required variable
-        #
-        # variable "name" {
-        #   required    = true
-        #   type        = string
-        #   description = <<-END
-        #     The name of the resource
-        #   END
-        #   default     = "resource-name"
-        # }
+        variable "display_name" {
+          type        = string
+          description = <<-END
+            An human-readable name for this notification channel. It is recommended that you specify a non-empty and unique name in order to make it easier to identify the channels in your project, though this is not enforced. The display name is limited to 512 Unicode characters.
+          END
+          default = null
+        }
 
-        ### Example of an optional variable
-        #
-        # variable "name" {
-        #   type        = string
-        #   description = <<-END
-        #     The name of the resource
-        #   END
-        #   default     = "optional-resource-name"
-        # }
+        variable "description" {
+          type        = string
+          description = <<-END
+            An optional human-readable description of this notification channel. This description may provide additional details, beyond the display name, for the channel. This may not exceed 1024 Unicode characters.
+          END
+          default = "Notification managed by the mineiros-io/terraform-google-monitoring-notification-channel Terraform module."
+        }
 
-        ### Example of an object
-        #
-        # variable "user" {
-        #   type        = any
-        #   readme_type = "object(user)"
-        #   default     = {}
-        #   readme_example = <<-END
-        #     user = {
-        #       name        = "marius"
-        #       description = "The guy from Berlin."
-        #     }
-        #   END
+        variable "enabled" {
+          type        = bool
+          description = <<-END
+            Whether notifications are forwarded to the described channel. This makes it possible to disable delivery of notifications to a particular channel without removing the channel from all alerting policies that reference the channel. This is a more convenient approach when the change is temporary and you want to receive notifications from the same set of alerting policies on the channel at some point in the future.
+          END
+          default = true
+        }
 
-        #   attribute "name" {
-        #     required    = true
-        #     type        = string
-        #     description = <<-END
-        #       The name of the user
-        #     END
-        #   }
+        variable "labels" {
+          type        = string
+          description = <<-END
+            Configuration fields that define the channel and its behavior. Labels with sensitive data should be configured via the 'sensitive_labels' block.
+          END
+          readme_example = <<-END
+            labels = {
+              email_address = "address@example.com"
+            }
+          END
+          default     = {}
+        }
 
-        #   attribute "description" {
-        #      type        = string
-        #      description = <<-END
-        #        A description describng the user in more detail
-        #      END
-        #      default     = ""
-        #    }
-        #  }
+        variable "user_labels" {
+          type        = string
+          description = <<-END
+            User-supplied key/value data that does not need to conform to the corresponding notification channel schema, unlike the `labels` field. The field can contain up to 64 entries. Each key and value is limited to 63 Unicode characters or 128 bytes, whichever is smaller. Labels and values can contain only lowercase letters, numerals, underscores, and dashes. Keys must begin with a letter.
+          END
+          default     = {}
+        }
+
+        variable "sensitive_labels" {
+          type        = any
+          description = <<-END
+            Different notification type behaviors are configured primarily using the the labels field on this resource. This block contains the labels which contain secrets or passwords so that they can be marked sensitive and hidden from plan output. The name of the field, eg: password, will be the key in the labels map in the api request. Credentials may not be specified in both locations and will cause an error. Changing from one location to a different credential configuration in the config will require an apply to update state.
+          END
+          readme_type = "object(sensitive_labels)"
+          default     = null
+          readme_example = <<-END
+            sensitive_labels = {
+              auth_token = "example-token"
+            }
+          END
+
+          attribute "auth_token" {
+            type        = string
+            description = <<-END
+              An authorization token for a notification channel. Channel types that support this field include: `slack` Note: This property is sensitive and will not be displayed in the plan.
+            END
+          }
+
+          attribute "password" {
+            type        = string
+            description = <<-END
+              An password for a notification channel. Channel types that support this field include: `webhook_basicauth` Note: This property is sensitive and will not be displayed in the plan.
+            END
+          }
+
+          attribute "service_key" {
+            type        = string
+            description = <<-END
+              An servicekey token for a notification channel. Channel types that support this field include: `pagerduty` Note: This property is sensitive and will not be displayed in the plan.
+            END
+          }
+        }
       }
-
-      # section {
-      #   title = "Extended Resource Configuration"
-      #
-      #   # please uncomment and add extended resource variables here (rsource not the main resource)
-      # }
-
+ 
       section {
         title = "Module Configuration"
 
@@ -171,18 +206,51 @@ section {
           default     = true
         }
 
-        variable "module_tags" {
-          type        = map(string)
+        variable "module_timeouts" {
+          type        = any
+          readme_type = "object(google_monitoring_notification_channel)"
           description = <<-END
-            A map of tags that will be applied to all created resources that accept tags. Tags defined with 'module_tags' can be overwritten by resource-specific tags.
+            How long certain operations (per resource type) are allowed to take before being considered to have failed.
           END
-          default     = {}
+          default = {}
           readme_example = <<-END
-            module_tags = {
-              environment = "staging"
-              team        = "platform"
+            module_timeouts = {
+              google_monitoring_notification_channel = {
+                create = "4m"
+                update = "4m"
+                delete = "4m"
+              }
             }
           END
+
+          attribute "google_monitoring_notification_channel" {
+            type        = any
+            readme_type = "object(timeouts)"
+            description = <<-END
+              Timeout for the `google_monitoring_notification_channel` resource.
+            END
+
+            attribute "create" {
+              type        = string
+              description = <<-END
+                Timeout for `create` operations.
+              END
+            }
+
+            attribute "update" {
+              type        = string
+              description = <<-END
+                Timeout for `update` operations.
+              END
+            }
+
+            attribute "delete" {
+              type        = string
+              description = <<-END
+                Timeout for `delete` operations.
+              END
+            }
+          }
         }
 
         variable "module_depends_on" {
@@ -193,7 +261,7 @@ section {
           END
           readme_example = <<-END
             module_depends_on = [
-              aws_vpc.vpc
+              google_monitoring_alert_policy.alert-policy 
             ]
           END
         }
@@ -209,10 +277,6 @@ section {
       - **`module_enabled`**
 
         Whether this module is enabled.
-
-      - **`module_tags`**
-
-        The map of tags that are being applied to all created resources that accept tags.
     END
   }
 
@@ -220,21 +284,16 @@ section {
     title = "External Documentation"
 
     section {
-      title   = "AWS Documentation IAM"
+      title   = "GCP Billing Budgets Documentation"
       content = <<-END
-        - https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles.html
-        - https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies.html
-        - https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_use_switch-role-ec2_instance-profiles.html
+        - https://cloud.google.com/monitoring/support/notification-options 
       END
     }
 
     section {
-      title   = "Terraform AWS Provider Documentation"
+      title   = "Terraform GCP Provider Documentation"
       content = <<-END
-        - https://www.terraform.io/docs/providers/aws/r/iam_role.html
-        - https://www.terraform.io/docs/providers/aws/r/iam_role_policy.html
-        - https://www.terraform.io/docs/providers/aws/r/iam_role_policy_attachment.html
-        - https://www.terraform.io/docs/providers/aws/r/iam_instance_profile.html
+        - https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/monitoring_notification_channel
       END
     }
   }
@@ -313,7 +372,7 @@ section {
 
 references {
   ref "homepage" {
-    value = "https://mineiros.io/?ref=terraform-module-template"
+    value = "https://mineiros.io/?ref=terraform-google-billing-budget"
   }
   ref "hello@mineiros.io" {
     value = " mailto:hello@mineiros.io"
@@ -324,9 +383,6 @@ references {
   ref "releases-terraform" {
     value = "https://github.com/hashicorp/terraform/releases"
   }
-  ref "releases-aws-provider" {
-    value = "https://github.com/terraform-providers/terraform-provider-aws/releases"
-  }
   ref "apache20" {
     value = "https://opensource.org/licenses/Apache-2.0"
   }
@@ -336,31 +392,31 @@ references {
   ref "terraform" {
     value = "https://www.terraform.io"
   }
-  ref "aws" {
-    value = "https://aws.amazon.com/"
+  ref "gcp" {
+    value = "https://cloud.google.com"
   }
   ref "semantic versioning (semver)" {
     value = "https://semver.org/"
   }
   ref "variables.tf" {
-    value = "https://github.com/mineiros-io/terraform-module-template/blob/main/variables.tf"
+    value = "https://github.com/mineiros-io/terraform-google-billing-budget/blob/main/variables.tf"
   }
   ref "examples/" {
-    value = "https://github.com/mineiros-io/terraform-module-template/blob/main/examples"
+    value = "https://github.com/mineiros-io/terraform-google-billing-budget/blob/main/examples"
   }
   ref "issues" {
-    value = "https://github.com/mineiros-io/terraform-module-template/issues"
+    value = "https://github.com/mineiros-io/terraform-google-billing-budget/issues"
   }
   ref "license" {
-    value = "https://github.com/mineiros-io/terraform-module-template/blob/main/LICENSE"
+    value = "https://github.com/mineiros-io/terraform-google-billing-budget/blob/main/LICENSE"
   }
   ref "makefile" {
-    value = "https://github.com/mineiros-io/terraform-module-template/blob/main/Makefile"
+    value = "https://github.com/mineiros-io/terraform-google-billing-budget/blob/main/Makefile"
   }
   ref "pull requests" {
-    value = "https://github.com/mineiros-io/terraform-module-template/pulls"
+    value = "https://github.com/mineiros-io/terraform-google-billing-budget/pulls"
   }
   ref "contribution guidelines" {
-    value = "https://github.com/mineiros-io/terraform-module-template/blob/main/CONTRIBUTING.md"
+    value = "https://github.com/mineiros-io/terraform-google-billing-budget/blob/main/CONTRIBUTING.md"
   }
 }

@@ -7,7 +7,7 @@ on:
   pull_request:
 
 env:
-  GOOGLE_CREDENTIALS: ${{ secrets.MINEIROS_TESTING_GCP_BILLING_ADMIN_SA_KEY_FILE }}
+  GOOGLE_CREDENTIALS: ${{ secrets.MINEIROS_TESTING_GCP_SA_KEY_FILE }}
 
 concurrency:
   group: terraform-google-monitoring-notification-channel

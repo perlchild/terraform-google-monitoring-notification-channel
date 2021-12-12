@@ -2,6 +2,11 @@
 # OUTPUT CALCULATED VARIABLES (prefer full objects)
 # ----------------------------------------------------------------------------------------------------------------------
 
+output "budget" {
+  description = "All attributes of the created `google_monitoring_notification_channel` resource."
+  value       = try(google_monitoring_notification_channel.notification_channel[0], {})
+}
+
 # ----------------------------------------------------------------------------------------------------------------------
 # OUTPUT ALL RESOURCES AS FULL OBJECTS
 # ----------------------------------------------------------------------------------------------------------------------
@@ -13,9 +18,4 @@
 output "module_enabled" {
   description = "Whether the module is enabled."
   value       = var.module_enabled
-}
-
-output "module_tags" {
-  description = "A map of tags that will be applied to all created resources that accept tags."
-  value       = var.module_tags
 }

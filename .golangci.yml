@@ -27,7 +27,6 @@ linters:
     - revive
     - govet
     - ineffassign
-    - interfacer
     - misspell
     - nakedret
     - prealloc

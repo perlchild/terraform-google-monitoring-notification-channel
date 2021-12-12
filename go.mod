@@ -1,4 +1,4 @@
-module github.com/mineiros-io/terraform-module-template
+module github.com/mineiros-io/terraform-google-monitoring-notification-channel
 
 go 1.14
 

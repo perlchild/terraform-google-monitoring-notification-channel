@@ -4,23 +4,28 @@
 # The purpose is to activate everything the module offers, but trying to keep execution time and costs minimal.
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-variable "aws_region" {
-  description = "(Optional) The AWS region in which all resources will be created."
+variable "gcp_region" {
   type        = string
-  default     = "us-east-1"
+  description = "(Required) The gcp region in which all resources will be created."
+}
+
+variable "gcp_project" {
+  type        = string
+  description = "(Required) The ID of the project in which the resource belongs."
 }
 
 terraform {
   required_providers {
-    aws = {
-      source  = "hashicorp/aws"
-      version = "~> 3.0"
+    google = {
+      source  = "hashicorp/google"
+      version = "~> 4.0"
     }
   }
 }
 
-provider "aws" {
-  region = var.aws_region
+provider "google" {
+  region  = var.gcp_region
+  project = var.gcp_project
 }
 
 # DO NOT RENAME MODULE NAME
@@ -30,13 +35,27 @@ module "test" {
   module_enabled = true
 
   # add all required arguments
-
+  type = "slack"
   # add all optional arguments that create additional resources
+  display_name = "slack-alert"
+  description  = "An example Slack notification channel."
+
+  labels = {
+    channel_name = "#alerts"
+  }
+
+  sensitive_labels = {
+    auth_token = "XXX"
+  }
 
   # add most/all other optional arguments
 
-  module_tags = {
-    Environment = "unknown"
+  module_timeouts = {
+    google_monitoring_notification_channel = {
+      create = "10m"
+      update = "10m"
+      delete = "10m"
+    }
   }
 
   module_depends_on = ["nothing"]

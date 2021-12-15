@@ -67,8 +67,9 @@ section {
       Create a slack notification channel:
 
       ```hcl
-      module "terraform-google-billing-budget" {
-        source = "git@github.com:mineiros-io/terraform-google-monitoring-notification-channel.git?ref=v0.0.1"
+      module "terraform-google-monitoring-notification-channel" {
+        source  = "mineiros-io/monitoring-notification-channel/google"
+        version = "0.0.2"
 
         type        = "slack"
 

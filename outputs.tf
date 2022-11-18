@@ -2,7 +2,7 @@
 # OUTPUT CALCULATED VARIABLES (prefer full objects)
 # ----------------------------------------------------------------------------------------------------------------------
 
-output "budget" {
+output "notification_channel" {
   description = "All attributes of the created `google_monitoring_notification_channel` resource."
   value       = try(google_monitoring_notification_channel.notification_channel[0], {})
 }

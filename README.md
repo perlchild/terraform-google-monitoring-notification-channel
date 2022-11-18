@@ -54,7 +54,7 @@ Create a slack notification channel:
 ```hcl
 module "terraform-google-monitoring-notification-channel" {
   source  = "mineiros-io/monitoring-notification-channel/google"
-  version = "0.0.2"
+  version = "0.0.3"
 
   type        = "slack"
 
@@ -126,7 +126,7 @@ See [variables.tf] and [examples/] for details and use-cases.
 
   Default is `{}`.
 
-- [**`sensitive_labels`**](#var-sensitive_labels): *(Optional `object(sensitive_labels)`)*<a name="var-sensitive_labels"></a>
+- [**`sensitive_labels`**](#var-sensitive_labels): *(Optional `any`)*<a name="var-sensitive_labels"></a>
 
   Different notification type behaviors are configured primarily using the the labels field on this resource. This block contains the labels which contain secrets or passwords so that they can be marked sensitive and hidden from plan output. The name of the field, eg: password, will be the key in the labels map in the api request. Credentials may not be specified in both locations and will cause an error. Changing from one location to a different credential configuration in the config will require an apply to update state.
 
@@ -142,15 +142,15 @@ See [variables.tf] and [examples/] for details and use-cases.
 
   The object accepts the following attributes:
 
-  - [**`auth_token`**](#attr-auth_token-1): *(Optional `string`)*<a name="attr-auth_token-1"></a>
+  - [**`auth_token`**](#attr-sensitive_labels-auth_token): *(Optional `string`)*<a name="attr-sensitive_labels-auth_token"></a>
 
     An authorization token for a notification channel. Channel types that support this field include: `slack` Note: This property is sensitive and will not be displayed in the plan.
 
-  - [**`password`**](#attr-password-1): *(Optional `string`)*<a name="attr-password-1"></a>
+  - [**`password`**](#attr-sensitive_labels-password): *(Optional `string`)*<a name="attr-sensitive_labels-password"></a>
 
     An password for a notification channel. Channel types that support this field include: `webhook_basicauth` Note: This property is sensitive and will not be displayed in the plan.
 
-  - [**`service_key`**](#attr-service_key-1): *(Optional `string`)*<a name="attr-service_key-1"></a>
+  - [**`service_key`**](#attr-sensitive_labels-service_key): *(Optional `string`)*<a name="attr-sensitive_labels-service_key"></a>
 
     An servicekey token for a notification channel. Channel types that support this field include: `pagerduty` Note: This property is sensitive and will not be displayed in the plan.
 
@@ -162,7 +162,7 @@ See [variables.tf] and [examples/] for details and use-cases.
 
   Default is `true`.
 
-- [**`module_timeouts`**](#var-module_timeouts): *(Optional `object(google_monitoring_notification_channel)`)*<a name="var-module_timeouts"></a>
+- [**`module_timeouts`**](#var-module_timeouts): *(Optional `any`)*<a name="var-module_timeouts"></a>
 
   How long certain operations (per resource type) are allowed to take before being considered to have failed.
 
@@ -182,25 +182,25 @@ See [variables.tf] and [examples/] for details and use-cases.
 
   The object accepts the following attributes:
 
-  - [**`google_monitoring_notification_channel`**](#attr-google_monitoring_notification_channel-1): *(Optional `object(timeouts)`)*<a name="attr-google_monitoring_notification_channel-1"></a>
+  - [**`google_monitoring_notification_channel`**](#attr-module_timeouts-google_monitoring_notification_channel): *(Optional `any`)*<a name="attr-module_timeouts-google_monitoring_notification_channel"></a>
 
     Timeout for the `google_monitoring_notification_channel` resource.
 
     The object accepts the following attributes:
 
-    - [**`create`**](#attr-create-2): *(Optional `string`)*<a name="attr-create-2"></a>
+    - [**`create`**](#attr-module_timeouts-google_monitoring_notification_channel-create): *(Optional `string`)*<a name="attr-module_timeouts-google_monitoring_notification_channel-create"></a>
 
       Timeout for `create` operations.
 
-    - [**`update`**](#attr-update-2): *(Optional `string`)*<a name="attr-update-2"></a>
+    - [**`update`**](#attr-module_timeouts-google_monitoring_notification_channel-update): *(Optional `string`)*<a name="attr-module_timeouts-google_monitoring_notification_channel-update"></a>
 
       Timeout for `update` operations.
 
-    - [**`delete`**](#attr-delete-2): *(Optional `string`)*<a name="attr-delete-2"></a>
+    - [**`delete`**](#attr-module_timeouts-google_monitoring_notification_channel-delete): *(Optional `string`)*<a name="attr-module_timeouts-google_monitoring_notification_channel-delete"></a>
 
       Timeout for `delete` operations.
 
-- [**`module_depends_on`**](#var-module_depends_on): *(Optional `list(dependencies)`)*<a name="var-module_depends_on"></a>
+- [**`module_depends_on`**](#var-module_depends_on): *(Optional `any`)*<a name="var-module_depends_on"></a>
 
   A list of dependencies. Any object can be _assigned_ to this list to define a hidden external dependency.
 

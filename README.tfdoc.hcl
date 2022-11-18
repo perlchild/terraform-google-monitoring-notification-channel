@@ -69,7 +69,7 @@ section {
       ```hcl
       module "terraform-google-monitoring-notification-channel" {
         source  = "mineiros-io/monitoring-notification-channel/google"
-        version = "0.0.2"
+        version = "0.0.3"
 
         type        = "slack"
 

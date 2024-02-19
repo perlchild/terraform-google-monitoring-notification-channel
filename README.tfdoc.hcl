@@ -20,11 +20,11 @@ header {
     text  = "Terraform Version"
   }
 
-   badge "tf-gcp-provider" {
-     image = "https://img.shields.io/badge/google-3-1A73E8.svg?logo=terraform"
-     url   = "https://github.com/terraform-providers/terraform-provider-google/releases"
-     text  = "Google Provider Version"
-   }
+  badge "tf-gcp-provider" {
+    image = "https://img.shields.io/badge/google-3-1A73E8.svg?logo=terraform"
+    url   = "https://github.com/terraform-providers/terraform-provider-google/releases"
+    text  = "Google Provider Version"
+  }
 
   badge "slack" {
     image = "https://img.shields.io/badge/slack-@mineiros--community-f32752.svg?logo=slack"
@@ -45,7 +45,7 @@ section {
     and third-party messaging applications.
 
     **_This module supports Terraform version 1
-    and is compatible with the Terraform Google Cloud Provider version 3._**
+    and is compatible with the Terraform Google Cloud Provider version 4._** and 5._**
 
     This module is part of our Infrastructure as Code (IaC) framework
     that enables our users and customers to easily deploy and manage reusable,
@@ -112,7 +112,7 @@ section {
           description = <<-END
             The ID of the project in which the resource belongs. If it is not set, the provider project is used.
           END
-          default = null
+          default     = null
         }
 
         variable "display_name" {
@@ -120,7 +120,7 @@ section {
           description = <<-END
             An human-readable name for this notification channel. It is recommended that you specify a non-empty and unique name in order to make it easier to identify the channels in your project, though this is not enforced. The display name is limited to 512 Unicode characters.
           END
-          default = null
+          default     = null
         }
 
         variable "description" {
@@ -128,7 +128,7 @@ section {
           description = <<-END
             An optional human-readable description of this notification channel. This description may provide additional details, beyond the display name, for the channel. This may not exceed 1024 Unicode characters.
           END
-          default = "Notification managed by the mineiros-io/terraform-google-monitoring-notification-channel Terraform module."
+          default     = "Notification managed by the mineiros-io/terraform-google-monitoring-notification-channel Terraform module."
         }
 
         variable "enabled" {
@@ -136,12 +136,12 @@ section {
           description = <<-END
             Whether notifications are forwarded to the described channel. This makes it possible to disable delivery of notifications to a particular channel without removing the channel from all alerting policies that reference the channel. This is a more convenient approach when the change is temporary and you want to receive notifications from the same set of alerting policies on the channel at some point in the future.
           END
-          default = true
+          default     = true
         }
 
         variable "labels" {
-          type        = string
-          description = <<-END
+          type           = map(string)
+          description    = <<-END
             Configuration fields that define the channel and its behavior. Labels with sensitive data should be configured via the 'sensitive_labels' block.
           END
           readme_example = <<-END
@@ -149,11 +149,11 @@ section {
               email_address = "address@example.com"
             }
           END
-          default     = {}
+          default        = {}
         }
 
         variable "user_labels" {
-          type        = string
+          type        = map(string)
           description = <<-END
             User-supplied key/value data that does not need to conform to the corresponding notification channel schema, unlike the `labels` field. The field can contain up to 64 entries. Each key and value is limited to 63 Unicode characters or 128 bytes, whichever is smaller. Labels and values can contain only lowercase letters, numerals, underscores, and dashes. Keys must begin with a letter.
           END
@@ -161,12 +161,12 @@ section {
         }
 
         variable "sensitive_labels" {
-          type        = any
-          description = <<-END
+          type           = any
+          description    = <<-END
             Different notification type behaviors are configured primarily using the the labels field on this resource. This block contains the labels which contain secrets or passwords so that they can be marked sensitive and hidden from plan output. The name of the field, eg: password, will be the key in the labels map in the api request. Credentials may not be specified in both locations and will cause an error. Changing from one location to a different credential configuration in the config will require an apply to update state.
           END
-          readme_type = "object(sensitive_labels)"
-          default     = null
+          readme_type    = "object(sensitive_labels)"
+          default        = null
           readme_example = <<-END
             sensitive_labels = {
               auth_token = "example-token"
@@ -195,7 +195,7 @@ section {
           }
         }
       }
- 
+
       section {
         title = "Module Configuration"
 
@@ -208,12 +208,12 @@ section {
         }
 
         variable "module_timeouts" {
-          type        = any
-          readme_type = "object(google_monitoring_notification_channel)"
-          description = <<-END
+          type           = any
+          readme_type    = "object(google_monitoring_notification_channel)"
+          description    = <<-END
             How long certain operations (per resource type) are allowed to take before being considered to have failed.
           END
-          default = {}
+          default        = {}
           readme_example = <<-END
             module_timeouts = {
               google_monitoring_notification_channel = {
@@ -255,9 +255,9 @@ section {
         }
 
         variable "module_depends_on" {
-          type        = any
-          readme_type = "list(dependencies)"
-          description = <<-END
+          type           = any
+          readme_type    = "list(dependencies)"
+          description    = <<-END
             A list of dependencies. Any object can be _assigned_ to this list to define a hidden external dependency.
           END
           readme_example = <<-END
@@ -279,6 +279,27 @@ section {
 
         Whether this module is enabled.
     END
+  }
+
+  section {
+    title   = "Module Outputs"
+    content = <<-END
+      The following attributes are exported in the outputs of the module:
+    END
+
+    output "module_enabled" {
+      type        = bool
+      description = <<-END
+        Whether this module is enabled.
+      END
+    }
+
+    output "notification_channel" {
+      type        = object(notification_channel)
+      description = <<-END
+        All attributes of the created `google_monitoring_notification_channel` resource.
+      END
+    }
   }
 
   section {

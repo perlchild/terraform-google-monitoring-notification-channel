@@ -4,35 +4,11 @@
 # The purpose is to activate everything the module offers, but trying to keep execution time and costs minimal.
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-variable "gcp_region" {
-  type        = string
-  description = "(Required) The gcp region in which all resources will be created."
-}
-
-variable "gcp_project" {
-  type        = string
-  description = "(Required) The ID of the project in which the resource belongs."
-}
-
-terraform {
-  required_providers {
-    google = {
-      source  = "hashicorp/google"
-      version = "~> 4.0"
-    }
-  }
-}
-
-provider "google" {
-  region  = var.gcp_region
-  project = var.gcp_project
-}
-
 # DO NOT RENAME MODULE NAME
 module "test" {
   source = "../.."
 
-  module_enabled = true
+  module_enabled = false // disabled bcs if invalid auth_token when running
 
   # add all required arguments
   type = "slack"

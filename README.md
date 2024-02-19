@@ -16,7 +16,7 @@ a policy violation is detected. Examples of channels include email, SMS,
 and third-party messaging applications.
 
 **_This module supports Terraform version 1
-and is compatible with the Terraform Google Cloud Provider version 3._**
+and is compatible with the Terraform Google Cloud Provider version 4._** and 5._**
 
 This module is part of our Infrastructure as Code (IaC) framework
 that enables our users and customers to easily deploy and manage reusable,
@@ -30,6 +30,7 @@ secure, and production-grade cloud infrastructure.
     - [Main Resource Configuration](#main-resource-configuration)
     - [Module Configuration](#module-configuration)
 - [Module Attributes Reference](#module-attributes-reference)
+- [Module Outputs](#module-outputs)
 - [External Documentation](#external-documentation)
   - [GCP Billing Budgets Documentation](#gcp-billing-budgets-documentation)
   - [Terraform GCP Provider Documentation](#terraform-gcp-provider-documentation)
@@ -106,7 +107,7 @@ See [variables.tf] and [examples/] for details and use-cases.
 
   Default is `true`.
 
-- [**`labels`**](#var-labels): *(Optional `string`)*<a name="var-labels"></a>
+- [**`labels`**](#var-labels): *(Optional `map(string)`)*<a name="var-labels"></a>
 
   Configuration fields that define the channel and its behavior. Labels with sensitive data should be configured via the 'sensitive_labels' block.
 
@@ -120,7 +121,7 @@ See [variables.tf] and [examples/] for details and use-cases.
   }
   ```
 
-- [**`user_labels`**](#var-user_labels): *(Optional `string`)*<a name="var-user_labels"></a>
+- [**`user_labels`**](#var-user_labels): *(Optional `map(string)`)*<a name="var-user_labels"></a>
 
   User-supplied key/value data that does not need to conform to the corresponding notification channel schema, unlike the `labels` field. The field can contain up to 64 entries. Each key and value is limited to 63 Unicode characters or 128 bytes, whichever is smaller. Labels and values can contain only lowercase letters, numerals, underscores, and dashes. Keys must begin with a letter.
 
@@ -219,6 +220,18 @@ The following attributes are exported in the outputs of the module:
 - **`module_enabled`**
 
   Whether this module is enabled.
+
+## Module Outputs
+
+The following attributes are exported in the outputs of the module:
+
+- [**`module_enabled`**](#output-module_enabled): *(`bool`)*<a name="output-module_enabled"></a>
+
+  Whether this module is enabled.
+
+- [**`notification_channel`**](#output-notification_channel): *(`object(notification_channel)`)*<a name="output-notification_channel"></a>
+
+  All attributes of the created `google_monitoring_notification_channel` resource.
 
 ## External Documentation
 

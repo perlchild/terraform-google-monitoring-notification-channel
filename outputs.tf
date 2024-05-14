@@ -7,6 +7,10 @@ output "notification_channel" {
   value       = try(google_monitoring_notification_channel.notification_channel[0], {})
 }
 
+output "id" {
+  value = try(google_monitoring_notification_channel.notification_channel[0].id, {})
+}
+
 # ----------------------------------------------------------------------------------------------------------------------
 # OUTPUT ALL RESOURCES AS FULL OBJECTS
 # ----------------------------------------------------------------------------------------------------------------------

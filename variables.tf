@@ -92,3 +92,4 @@ variable "module_depends_on" {
   description = "(Optional) A list of external resources the module depends on."
   default     = []
 }
+
